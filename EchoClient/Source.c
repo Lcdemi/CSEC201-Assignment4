@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <winsock2.h>
+#include <windows.h>
 #pragma comment(lib,"ws2_32.lib")
 
 int main(void) {
@@ -67,44 +68,64 @@ int main(void) {
         }
 
         // Receive response from server
-        bytesRead = recv(clientSocket, srvResponse, 1024, 0);
-        if (bytesRead == SOCKET_ERROR) {
-            printf("Receive failed\n");
-            closesocket(clientSocket);
-            WSACleanup();
-            return 1;
-        }
-
-        // Null-terminate the received data
-        //srvResponse[bytesRead] = '\0';
-        // Check if the received response is an MD5 hash
-        if (strncmp(userInput, "md5", 3) == 0) {
-            // Print the hash
-            printf("Server Response: ");
-            for (int i = 0; i < 16; i++) {
-                printf("%02X", srvResponse[i]);
+        if (strncmp(userInput, "repeat2", 7) == 0 || strncmp(userInput, "repeat3", 7) == 0 || strncmp(userInput, "repeat4", 7) == 0
+            || strncmp(userInput, "repeat5", 7) == 0 || strncmp(userInput, "repeat6", 7) == 0 || strncmp(userInput, "repeat7", 7) == 0
+            || strncmp(userInput, "repeat8", 7) == 0 || strncmp(userInput, "repeat9", 7) == 0) 
+        {
+            int repeatCount = userInput[6] - '0';
+            //printf("Number of Repeats: %d\n", repeatCount); testing code
+            for (int i = 0; i < repeatCount; i++) {
+                bytesRead = recv(clientSocket, srvResponse, 1024, 0);
+                if (bytesRead == SOCKET_ERROR) {
+                    printf("Receive failed\n");
+                    closesocket(clientSocket);
+                    WSACleanup();
+                    return 1;
+                }
+                printf("Server response: %s\n", srvResponse);
+                memset(srvResponse, '\0', 1025);
             }
-            printf("\n");
-        } else if (strncmp(userInput, "sha1", 4) == 0) {
-            // Print the hash
-            printf("Server Response: ");
-            for (int i = 0; i < 20; i++) {
-                printf("%02X", srvResponse[i]);
-            }
-            printf("\n");
-        } else if (strncmp(userInput, "sha256", 6) == 0) {
-            // Print the hash
-            printf("Server Response: ");
-            for (int i = 0; i < 32; i++) {
-                printf("%02X", srvResponse[i]);
-            }
-            printf("\n");
         }
         else {
-            // Handle other responses differently
-            printf("Server response: %s\n", srvResponse);
+            bytesRead = recv(clientSocket, srvResponse, 1024, 0);
+            if (bytesRead == SOCKET_ERROR) {
+                printf("Receive failed\n");
+                closesocket(clientSocket);
+                WSACleanup();
+                return 1;
+            }
+
+            // Check if the received response is an MD5 hash
+            if (strncmp(userInput, "md5", 3) == 0) {
+                // Print the hash
+                printf("Server Response: ");
+                for (int i = 0; i < 16; i++) {
+                    printf("%02X", srvResponse[i]);
+                }
+                printf("\n");
+            } // Check if the received response is an SHA1 hash
+            else if (strncmp(userInput, "sha1", 4) == 0) {
+                // Print the hash
+                printf("Server Response: ");
+                for (int i = 0; i < 20; i++) {
+                    printf("%02X", srvResponse[i]);
+                }
+                printf("\n");
+            } // Check if the received response is an SHA256 hash
+            else if (strncmp(userInput, "sha256", 6) == 0) {
+                // Print the hash
+                printf("Server Response: ");
+                for (int i = 0; i < 32; i++) {
+                    printf("%02X", srvResponse[i]);
+                }
+                printf("\n");
+            }
+            else {
+                // Handle other responses differently
+                printf("Server response: %s\n", srvResponse);
+            }
+            memset(srvResponse, '\0', 1025);
         }
-        memset(srvResponse, '\0', 1025);
     }
 
     // Close socket and cleanup

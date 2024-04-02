@@ -9,6 +9,7 @@
 int repeat(int num, SOCKET clientConn, char message[]) { //private function for repeat command
 	for (int i = 0; i < num; i++) {
 		send(clientConn, message, strlen(message), 0);
+		Sleep(50); //quick delay on sending messages
 	}
 	return 0;
 }
@@ -150,7 +151,7 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 			memset(command, '\0', 10);
 			memset(message, '\0', 1014);
 			memset(socketData, '\0', 1024);
-			printf("I HAVE MADE IT\n");
+			//printf("I HAVE MADE IT\n"); testing
 		}
 	}
 	closesocket(clientConn);
