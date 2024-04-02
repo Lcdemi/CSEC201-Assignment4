@@ -49,6 +49,7 @@ int main(void) {
     while (1) {
         printf("Enter a message to send across the network (type 'Done' to exit): ");
         fgets(userInput, 1024, stdin);
+        //scanf("%1025s", userInput);
 
         // Remove newline character
         userInput[strcspn(userInput, "\n")] = '\0';
