@@ -10,7 +10,7 @@ int main(void) {
     char serverIP[15] = "127.0.0.1";
     int serverPort = 1337;
     char userInput[1025];
-    char srvResponse[1025] = { '\0' };
+    unsigned char srvResponse[1025] = { '\0' };
     int bytesRead;
 
     // Initialize Winsock
