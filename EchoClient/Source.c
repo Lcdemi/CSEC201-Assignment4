@@ -10,7 +10,7 @@ int main(void) {
     char serverIP[15] = "127.0.0.1";
     int serverPort = 1337;
     char userInput[1025];
-    char srvResponse[1025];
+    char srvResponse[1025] = { '\0' };
     int bytesRead;
 
     // Initialize Winsock
@@ -75,8 +75,9 @@ int main(void) {
         }
 
         // Null-terminate the received data
-        srvResponse[bytesRead] = '\0';
+        //srvResponse[bytesRead] = '\0';
         printf("Server response: %s\n", srvResponse);
+        memset(srvResponse, '\0', 1025);
     }
 
     // Close socket and cleanup

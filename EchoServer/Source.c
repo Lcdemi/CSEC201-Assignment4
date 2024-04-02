@@ -13,25 +13,25 @@ int repeat(int num, SOCKET clientConn, char message[]) { //private function for 
 	return 0;
 }
 
-char hashBuffer[1024]; //for hashing functions
+char hashBuffer[1024] = { '\0' }; //for hashing functions
 
 int __stdcall HandleClient(SOCKET* clientSocket) {
 	SOCKET clientConn = *clientSocket;
 	char response[1024] = { 0 };
 	char socketData[1024] = { 0 }; //1k of data
+	char command[10] = { '\0' };
+	char message[1014] = { '\0' };
 	while (TRUE) {
 		if (recv(clientConn, socketData, sizeof(socketData), 0)) {
 			printf("Client sent: %s\n", socketData); //testing
-			char* command = (char*)malloc(10 * sizeof(char));
-			char* message = (char*)malloc(1024 * sizeof(char));
-			sscanf_s(socketData, "%9s %1023[^\n]", command, 10, message, 1024);
+			sscanf_s(socketData, "%9s %1023[^\n]", command, 10, message, 1014);
 
 			printf("Command: %s\n", command);
 			printf("Message: %s\n", message);
 			//different commands
 			if (strcmp(command, "echo") == 0) { //echo command
 				printf("Echo Command Found\n");
-				send(clientConn, message, sizeof(message), 0);
+				send(clientConn, message, strlen(message), 0);
 			}
 			else if (strcmp(command, "repeat2") == 0) { //repeat 2-9 commands
 				printf("Repeat2 Command Found\n");
@@ -68,7 +68,7 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 			else if (strcmp(command, "length") == 0) { //length command
 				printf("Length Command Found\n");
 				char lengthStr[1024];
-				sprintf_s(lengthStr, "Length: %d", (int)strlen(message));
+				sprintf_s(lengthStr, 1024, "Length: %d", strlen(message));
 				send(clientConn, lengthStr, strlen(lengthStr), 0);
 			}
 			else if (strcmp(command, "md5") == 0) {
@@ -92,7 +92,7 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, 0);
 				CryptCreateHash(hProv, CALG_SHA1, 0, 0, &hHash);
 				CryptHashData(hHash, (BYTE*)message, strlen(message), 0);
-				DWORD dwHashLen = 16; // default MD5 hash length
+				DWORD dwHashLen = 20; // SHA1 hash length
 				CryptGetHashParam(hHash, HP_HASHVAL, (BYTE*)hashBuffer, &dwHashLen, 0);
 				CryptDestroyHash(hHash);
 				CryptReleaseContext(hProv, 0);
@@ -106,7 +106,7 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, 0);
 				CryptCreateHash(hProv, CALG_SHA_256, 0, 0, &hHash);
 				CryptHashData(hHash, (BYTE*)message, strlen(message), 0);
-				DWORD dwHashLen = 16; // default MD5 hash length
+				DWORD dwHashLen = 32; // SHA256 hash length
 				CryptGetHashParam(hHash, HP_HASHVAL, (BYTE*)hashBuffer, &dwHashLen, 0);
 				CryptDestroyHash(hHash);
 				CryptReleaseContext(hProv, 0);
@@ -115,11 +115,13 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 			}
 			else { //if command doesn't exist
 				char errorMsg[1024];
-				sprintf_s(errorMsg, "Invalid Command: %s", command);
+				sprintf_s(errorMsg, 1024, "Invalid Command: %s", command);
 				send(clientConn, errorMsg, strlen(errorMsg), 0);
 			}
-			free(command);
-			free(message);
+			memset(command, '\0', 10);
+			memset(message, '\0', 1014);
+			memset(socketData, '\0', 1024);
+			printf("I HAVE MADE IT\n");
 		}
 	}
 	closesocket(clientConn);
