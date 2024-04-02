@@ -79,6 +79,7 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash);
 				CryptHashData(hHash, message, (DWORD)strlen(message), 0);
 				DWORD dwHashLen = 16; // default MD5 hash length
+				BYTE hashBuffer[16]; // Buffer to store hash
 				CryptGetHashParam(hHash, HP_HASHVAL, hashBuffer, &dwHashLen, 0);
 				CryptDestroyHash(hHash);
 				CryptReleaseContext(hProv, 0);
@@ -101,13 +102,22 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				HCRYPTHASH hHash;
 				CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, 0);
 				CryptCreateHash(hProv, CALG_SHA1, 0, 0, &hHash);
-				CryptHashData(hHash, (BYTE*)message, strlen(message), 0);
+				CryptHashData(hHash, (BYTE*)message, (DWORD)strlen(message), 0);
 				DWORD dwHashLen = 20; // SHA1 hash length
-				CryptGetHashParam(hHash, HP_HASHVAL, (BYTE*)hashBuffer, &dwHashLen, 0);
+				BYTE hashBuffer[20]; // Buffer to store hash
+				CryptGetHashParam(hHash, HP_HASHVAL, hashBuffer, &dwHashLen, 0);
 				CryptDestroyHash(hHash);
 				CryptReleaseContext(hProv, 0);
-				printf("Hash: %s\n", hashBuffer);
-				send(clientConn, hashBuffer, strlen(hashBuffer), 0);
+
+				// Print the hash in hexadecimal format
+				printf("Hash: ");
+				for (int i = 0; i < (int)dwHashLen; i++) {
+					printf("%02X", hashBuffer[i]);
+				}
+				printf("\n");
+
+				// Send the hash over the network
+				send(clientConn, (const char*)hashBuffer, dwHashLen, 0);
 			}
 			else if (strncmp(command, "sha256", 6) == 0) {
 				printf("SHA256 Command Found\n");
