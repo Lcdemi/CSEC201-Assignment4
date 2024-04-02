@@ -77,7 +77,19 @@ int main(void) {
 
         // Null-terminate the received data
         //srvResponse[bytesRead] = '\0';
-        printf("Server response: %s\n", srvResponse);
+        // Check if the received response is an MD5 hash
+        if (strncmp(userInput, "md5", 3) == 0) {
+            // Print the hash
+            printf("Server Response: ");
+            for (int i = 0; i < 16; i++) {
+                printf("%02X", srvResponse[i]);
+            }
+            printf("\n");
+        }
+        else {
+            // Handle other responses differently
+            printf("Server response: %s\n", srvResponse);
+        }
         memset(srvResponse, '\0', 1025);
     }
 

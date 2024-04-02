@@ -29,63 +29,73 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 			printf("Command: %s\n", command);
 			printf("Message: %s\n", message);
 			//different commands
-			if (strcmp(command, "echo") == 0) { //echo command
+			if (strncmp(command, "echo", 4) == 0) { //echo command
 				printf("Echo Command Found\n");
 				send(clientConn, message, strlen(message), 0);
 			}
-			else if (strcmp(command, "repeat2") == 0) { //repeat 2-9 commands
+			else if (strncmp(command, "repeat2", 7) == 0) { //repeat 2-9 commands
 				printf("Repeat2 Command Found\n");
 				repeat(2, clientConn, message);
 			}
-			else if (strcmp(command, "repeat3") == 0) {
+			else if (strncmp(command, "repeat3", 7) == 0) {
 				printf("Repeat3 Command Found\n");
 				repeat(3, clientConn, message);
 			}
-			else if (strcmp(command, "repeat4") == 0) {
+			else if (strncmp(command, "repeat4", 7) == 0) {
 				printf("Repeat4 Command Found\n");
 				repeat(4, clientConn, message);
 			}
-			else if (strcmp(command, "repeat5") == 0) {
+			else if (strncmp(command, "repeat5", 7) == 0) {
 				printf("Repeat5 Command Found\n");
 				repeat(5, clientConn, message);
 			}
-			else if (strcmp(command, "repeat6") == 0) {
+			else if (strncmp(command, "repeat6", 7) == 0) {
 				printf("Repeat6 Command Found\n");
 				repeat(6, clientConn, message);
 			}
-			else if (strcmp(command, "repeat7") == 0) {
+			else if (strncmp(command, "repeat7", 7) == 0) {
 				printf("Repeat7 Command Found\n");
 				repeat(7, clientConn, message);
 			}
-			else if (strcmp(command, "repeat8") == 0) {
+			else if (strncmp(command, "repeat8", 7) == 0) {
 				printf("Repeat8 Command Found\n");
 				repeat(8, clientConn, message);
 			}
-			else if (strcmp(command, "repeat9") == 0) {
+			else if (strncmp(command, "repeat9", 7) == 0) {
 				printf("Repeat9 Command Found\n");
 				repeat(9, clientConn, message);
 			}
-			else if (strcmp(command, "length") == 0) { //length command
+			else if (strncmp(command, "length", 6) == 0) { //length command
 				printf("Length Command Found\n");
 				char lengthStr[1024];
-				sprintf_s(lengthStr, 1024, "Length: %d", strlen(message));
+				sprintf_s(lengthStr, 1024, "Length: %d", (int)strlen(message));
 				send(clientConn, lengthStr, strlen(lengthStr), 0);
 			}
-			else if (strcmp(command, "md5") == 0) {
+			else if (strncmp(command, "md5", 3) == 0) {
 				printf("MD5 Command Found\n");
 				HCRYPTPROV hProv;
 				HCRYPTHASH hHash;
 				CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, 0);
 				CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash);
-				CryptHashData(hHash, (BYTE*)message, strlen(message), 0);
+				CryptHashData(hHash, message, (DWORD)strlen(message), 0);
 				DWORD dwHashLen = 16; // default MD5 hash length
-				CryptGetHashParam(hHash, HP_HASHVAL, (BYTE*)hashBuffer, &dwHashLen, 0);
+				CryptGetHashParam(hHash, HP_HASHVAL, hashBuffer, &dwHashLen, 0);
 				CryptDestroyHash(hHash);
 				CryptReleaseContext(hProv, 0);
+
 				printf("Hash: %s\n", hashBuffer);
-				send(clientConn, hashBuffer, strlen(hashBuffer), 0);
+
+				// Print the hash
+				printf("Hash: ");
+				for (int i = 0; i < (int)dwHashLen; i++) {
+					printf("%02X", hashBuffer[i]);
+				}
+				printf("\n");
+
+				// Send the hash over the network
+				send(clientConn, (const char*)hashBuffer, dwHashLen, 0);
 			}
-			else if (strcmp(command, "sha1") == 0) {
+			else if (strncmp(command, "sha1", 4) == 0) {
 				printf("SHA1 Command Found\n");
 				HCRYPTPROV hProv;
 				HCRYPTHASH hHash;
@@ -99,7 +109,7 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				printf("Hash: %s\n", hashBuffer);
 				send(clientConn, hashBuffer, strlen(hashBuffer), 0);
 			}
-			else if (strcmp(command, "sha256") == 0) {
+			else if (strncmp(command, "sha256", 6) == 0) {
 				printf("SHA256 Command Found\n");
 				HCRYPTPROV hProv;
 				HCRYPTHASH hHash;
