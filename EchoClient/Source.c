@@ -85,6 +85,20 @@ int main(void) {
                 printf("%02X", srvResponse[i]);
             }
             printf("\n");
+        } else if (strncmp(userInput, "sha1", 4) == 0) {
+            // Print the hash
+            printf("Server Response: ");
+            for (int i = 0; i < 20; i++) {
+                printf("%02X", srvResponse[i]);
+            }
+            printf("\n");
+        } else if (strncmp(userInput, "sha256", 6) == 0) {
+            // Print the hash
+            printf("Server Response: ");
+            for (int i = 0; i < 32; i++) {
+                printf("%02X", srvResponse[i]);
+            }
+            printf("\n");
         }
         else {
             // Handle other responses differently

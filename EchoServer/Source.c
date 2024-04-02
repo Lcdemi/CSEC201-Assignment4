@@ -123,15 +123,24 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				printf("SHA256 Command Found\n");
 				HCRYPTPROV hProv;
 				HCRYPTHASH hHash;
-				CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, 0);
+				CryptAcquireContext(&hProv, NULL, MS_ENH_RSA_AES_PROV, PROV_RSA_AES, 0);
 				CryptCreateHash(hProv, CALG_SHA_256, 0, 0, &hHash);
-				CryptHashData(hHash, (BYTE*)message, strlen(message), 0);
+				CryptHashData(hHash, (BYTE*)message, (DWORD)strlen(message), 0);
 				DWORD dwHashLen = 32; // SHA256 hash length
-				CryptGetHashParam(hHash, HP_HASHVAL, (BYTE*)hashBuffer, &dwHashLen, 0);
+				BYTE hashBuffer[32]; // Buffer to store hash
+				CryptGetHashParam(hHash, HP_HASHVAL, hashBuffer, &dwHashLen, 0);
 				CryptDestroyHash(hHash);
 				CryptReleaseContext(hProv, 0);
-				printf("Hash: %s\n", hashBuffer);
-				send(clientConn, hashBuffer, strlen(hashBuffer), 0);
+
+				// Print the hash in hexadecimal format
+				printf("Hash: ");
+				for (int i = 0; i < (int)dwHashLen; i++) {
+					printf("%02X", hashBuffer[i]);
+				}
+				printf("\n");
+
+				// Send the hash over the network
+				send(clientConn, (const char*)hashBuffer, dwHashLen, 0);
 			}
 			else { //if command doesn't exist
 				char errorMsg[1024];
