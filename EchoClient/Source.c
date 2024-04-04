@@ -49,7 +49,6 @@ int main(void) {
     // Main loop for sending messages
     while (1) {
         printf("Enter a message to send across the network (type 'Done' to exit): ");
-        //fgets(userInput, 1024, stdin);
         scanf(" %[^\n]", userInput);
         //printf("User Typed: %s\n", userInput); test code
 
