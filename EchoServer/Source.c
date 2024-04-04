@@ -31,49 +31,49 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 			printf("Message: %s\n", message);
 			//different commands
 			if (strncmp(command, "echo", 4) == 0) { //echo command
-				printf("Echo Command Found\n");
+				//printf("Echo Command Found\n");
 				send(clientConn, message, strlen(message), 0);
 			}
 			else if (strncmp(command, "repeat2", 7) == 0) { //repeat 2-9 commands
-				printf("Repeat2 Command Found\n");
+				//printf("Repeat2 Command Found\n");
 				repeat(2, clientConn, message);
 			}
 			else if (strncmp(command, "repeat3", 7) == 0) {
-				printf("Repeat3 Command Found\n");
+				//printf("Repeat3 Command Found\n");
 				repeat(3, clientConn, message);
 			}
 			else if (strncmp(command, "repeat4", 7) == 0) {
-				printf("Repeat4 Command Found\n");
+				//printf("Repeat4 Command Found\n");
 				repeat(4, clientConn, message);
 			}
 			else if (strncmp(command, "repeat5", 7) == 0) {
-				printf("Repeat5 Command Found\n");
+				//printf("Repeat5 Command Found\n");
 				repeat(5, clientConn, message);
 			}
 			else if (strncmp(command, "repeat6", 7) == 0) {
-				printf("Repeat6 Command Found\n");
+				//printf("Repeat6 Command Found\n");
 				repeat(6, clientConn, message);
 			}
 			else if (strncmp(command, "repeat7", 7) == 0) {
-				printf("Repeat7 Command Found\n");
+				//printf("Repeat7 Command Found\n");
 				repeat(7, clientConn, message);
 			}
 			else if (strncmp(command, "repeat8", 7) == 0) {
-				printf("Repeat8 Command Found\n");
+				//printf("Repeat8 Command Found\n");
 				repeat(8, clientConn, message);
 			}
 			else if (strncmp(command, "repeat9", 7) == 0) {
-				printf("Repeat9 Command Found\n");
+				//printf("Repeat9 Command Found\n");
 				repeat(9, clientConn, message);
 			}
 			else if (strncmp(command, "length", 6) == 0) { //length command
-				printf("Length Command Found\n");
+				//printf("Length Command Found\n");
 				char lengthStr[1024];
-				sprintf_s(lengthStr, 1024, "Length: %d", (int)strlen(message));
+				sprintf_s(lengthStr, 1024, "%d", (int)strlen(message));
 				send(clientConn, lengthStr, strlen(lengthStr), 0);
 			}
 			else if (strncmp(command, "md5", 3) == 0) {
-				printf("MD5 Command Found\n");
+				//printf("MD5 Command Found\n");
 				HCRYPTPROV hProv;
 				HCRYPTHASH hHash;
 				CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, 0);
@@ -85,20 +85,20 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				CryptDestroyHash(hHash);
 				CryptReleaseContext(hProv, 0);
 
-				printf("Hash: %s\n", hashBuffer);
+				//printf("Hash: %s\n", hashBuffer); testing
 
 				// Print the hash
-				printf("Hash: ");
-				for (int i = 0; i < (int)dwHashLen; i++) {
-					printf("%02X", hashBuffer[i]);
-				}
-				printf("\n");
+				//printf("Hash: ");
+				//for (int i = 0; i < (int)dwHashLen; i++) {
+				//	printf("%02X", hashBuffer[i]);
+				//}
+				//printf("\n");
 
 				// Send the hash over the network
 				send(clientConn, (const char*)hashBuffer, dwHashLen, 0);
 			}
 			else if (strncmp(command, "sha1", 4) == 0) {
-				printf("SHA1 Command Found\n");
+				//printf("SHA1 Command Found\n");
 				HCRYPTPROV hProv;
 				HCRYPTHASH hHash;
 				CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, 0);
@@ -111,17 +111,17 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				CryptReleaseContext(hProv, 0);
 
 				// Print the hash in hexadecimal format
-				printf("Hash: ");
-				for (int i = 0; i < (int)dwHashLen; i++) {
-					printf("%02X", hashBuffer[i]);
-				}
-				printf("\n");
+				//printf("Hash: ");
+				//for (int i = 0; i < (int)dwHashLen; i++) {
+				//	printf("%02X", hashBuffer[i]);
+				//}
+				//printf("\n");
 
 				// Send the hash over the network
 				send(clientConn, (const char*)hashBuffer, dwHashLen, 0);
 			}
 			else if (strncmp(command, "sha256", 6) == 0) {
-				printf("SHA256 Command Found\n");
+				//printf("SHA256 Command Found\n");
 				HCRYPTPROV hProv;
 				HCRYPTHASH hHash;
 				CryptAcquireContext(&hProv, NULL, MS_ENH_RSA_AES_PROV, PROV_RSA_AES, 0);
@@ -134,11 +134,11 @@ int __stdcall HandleClient(SOCKET* clientSocket) {
 				CryptReleaseContext(hProv, 0);
 
 				// Print the hash in hexadecimal format
-				printf("Hash: ");
-				for (int i = 0; i < (int)dwHashLen; i++) {
-					printf("%02X", hashBuffer[i]);
-				}
-				printf("\n");
+				//printf("Hash: ");
+				//for (int i = 0; i < (int)dwHashLen; i++) {
+				//	printf("%02X", hashBuffer[i]);
+				//}
+				//printf("\n");
 
 				// Send the hash over the network
 				send(clientConn, (const char*)hashBuffer, dwHashLen, 0);
